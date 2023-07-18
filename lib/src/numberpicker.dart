@@ -58,6 +58,8 @@ class NumberPicker extends StatefulWidget {
 
   final EdgeInsetsGeometry? itemPadding;
   final Alignment? itemAlignment;
+  final Decoration? selectedTextDecoration;
+  final EdgeInsetsGeometry? selectedTextPadding;
 
   const NumberPicker({
     Key? key,
@@ -79,15 +81,17 @@ class NumberPicker extends StatefulWidget {
     this.infiniteLoop = false,
     this.itemPadding,
     this.itemAlignment,
+    this.selectedTextDecoration,
+    this.selectedTextPadding,
   })  : assert(minValue <= value),
         assert(value <= maxValue),
         super(key: key);
 
   @override
-  _NumberPickerState createState() => _NumberPickerState();
+  NumberPickerState createState() => NumberPickerState();
 }
 
-class _NumberPickerState extends State<NumberPicker> {
+class NumberPickerState extends State<NumberPicker> {
   late ScrollController _scrollController;
 
   @override
@@ -208,20 +212,22 @@ class _NumberPickerState extends State<NumberPicker> {
     final isExtra = !widget.infiniteLoop &&
         (index < additionalItemsOnEachSide ||
             index >= listItemsCount - additionalItemsOnEachSide);
-    final itemStyle = value == widget.value ? selectedStyle : defaultStyle;
+    bool isSelected = value == widget.value;
+    final itemStyle = isSelected ? selectedStyle : defaultStyle;
 
     final child = isExtra
         ? SizedBox.shrink()
-        : Text(
-            _getDisplayedValue(value),
-            style: itemStyle,
+        : Container(
+            padding: isSelected ? widget.selectedTextPadding : null,
+            decoration: isSelected ? widget.selectedTextDecoration : null,
+            child: Text(_getDisplayedValue(value), style: itemStyle),
           );
 
     return Container(
       width: widget.itemWidth,
       height: widget.itemHeight,
-      alignment: widget.itemAlignment??Alignment.center,
-      padding: widget.itemPadding,
+      alignment: widget.itemAlignment ?? Alignment.center,
+      // padding: widget.itemPadding,
       child: child,
     );
   }
@@ -258,6 +264,17 @@ class _NumberPickerState extends State<NumberPicker> {
         curve: Curves.easeOutCubic,
       );
     }
+  }
+
+  void jumpTo(int newValue) {
+    int diff = newValue - widget.minValue;
+    int index = diff ~/ widget.step;
+    if (widget.infiniteLoop) {
+      final offset = _scrollController.offset + 0.5 * itemExtent;
+      final cycles = (offset / (itemCount * itemExtent)).floor();
+      index += cycles * itemCount;
+    }
+    _scrollController.jumpTo(index * itemExtent);
   }
 }
 
