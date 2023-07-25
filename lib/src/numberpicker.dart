@@ -220,7 +220,12 @@ class NumberPickerState extends State<NumberPicker> {
         : Container(
             padding: isSelected ? widget.selectedTextPadding : null,
             decoration: isSelected ? widget.selectedTextDecoration : null,
-            child: Text(_getDisplayedValue(value), style: itemStyle),
+            child: Text(
+              _getDisplayedValue(value),
+              style: itemStyle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           );
 
     return Container(
