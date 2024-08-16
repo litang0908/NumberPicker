@@ -39,7 +39,7 @@ class NumberPicker extends StatefulWidget {
   /// Style of non-selected numbers. If null, it uses Theme's bodyText2
   final TextStyle? textStyle;
 
-  /// Style of non-selected numbers. If null, it uses Theme's headline5 with accentColor
+  /// Style of non-selected numbers. If null, it uses Theme's headlineSmall with accentColor
   final TextStyle? selectedTextStyle;
 
   /// Whether to trigger haptic pulses or not
@@ -203,9 +203,9 @@ class NumberPickerState extends State<NumberPicker> {
 
   Widget _itemBuilder(BuildContext context, int index) {
     final themeData = Theme.of(context);
-    final defaultStyle = widget.textStyle ?? themeData.textTheme.bodyText2;
+    final defaultStyle = widget.textStyle ?? themeData.textTheme.bodyMedium;
     final selectedStyle = widget.selectedTextStyle ??
-        themeData.textTheme.headline5
+        themeData.textTheme.headlineSmall
             ?.copyWith(color: themeData.colorScheme.secondary);
 
     final value = _intValueFromIndex(index % itemCount);
